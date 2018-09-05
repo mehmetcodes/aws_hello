@@ -6,3 +6,9 @@ sudo mkdir -p /data
 if ! egrep "^/data" /etc/fstab; then
   echo "/dev/xvdf /data ext4 defaults,nofail,noatime,nodiratime,barrier=0,data=writeback 0 2" | sudo tee -a /etc/fstab > /dev/null
 fi
+sudo apt install -y apache2
+sudo sed -i 's/\/var\/www/\/data/g' /etc/apache2/apache2.conf
+sudo sed -i 's/\/var\/www\/html/\/data/g' /etc/apache2/sites-enabled/000-default.conf
+sudo sed -i 's/\/var\/www\/html/\/data/g' /etc/apache2/sites-available/000-default.conf
+sudo sh -c 'echo "<html><body>\"Hello AWS World\"<body></html>" > /data/index.html'
+sudo shutdown -r now
