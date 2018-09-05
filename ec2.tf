@@ -4,9 +4,23 @@ resource "aws_instance" "example" {
   subnet_id = "${aws_subnet.main_public.id}"
   depends_on = ["aws_internet_gateway.gw"]
   tags {
-    Name = "main"
+    Name = "main vpc example"
     CostAllocation = "AWS Takehome"
   }
+}
+
+resource "aws_ebs_volume" "example" {
+    availability_zone = "${data.aws_availability_zones.available.names[0]}"
+    size = 1
+    tags {
+        Name = "HelloWorld"
+    }
+}
+
+resource "aws_volume_attachment" "example" {
+  device_name = "/dev/sdf"
+  volume_id = "${aws_ebs_volume.example.id}"
+  instance_id = "${aws_instance.example.id}"
 }
 
 resource "aws_instance" "bastion" {
@@ -15,7 +29,7 @@ resource "aws_instance" "bastion" {
   subnet_id = "${aws_subnet.main_public.id}"
   depends_on = ["aws_internet_gateway.gw"]
   tags {
-    Name = "main"
+    Name = "main vpc bastion"
     CostAllocation = "AWS Takehome"
   }
 }
