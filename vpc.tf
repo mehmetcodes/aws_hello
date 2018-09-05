@@ -11,6 +11,7 @@ resource "aws_internet_gateway" "gw" {
 
 resource "aws_vpc" "main" {
   cidr_block = "${var.main_vpc_cidr}"
+  enable_dns_hostnames = true
   tags {
     Name = "Main"
     CostAllocation = "AWS Takehome"
@@ -27,4 +28,10 @@ resource "aws_subnet" "main_public"{
    Name = "Main Public Subnet"
    CostAllocation = "AWS Takehome"
  }
+}
+
+resource "aws_route" "a_default_route" {
+  route_table_id         = "${aws_vpc.main.default_route_table_id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = "${aws_internet_gateway.gw.id}"
 }

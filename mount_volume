@@ -1,0 +1,13 @@
+#!/bin/bash
+DEVICE = /dev/sdf
+DEST = /data
+OLD = $DEST-old
+devpath=$(readlink -f $DEVICE)
+if [[ $(sudo file -s $devpath) != *ext4* && -b $devpath ]]; then
+  sudo mkfs -t ext4 $devpath
+fi
+sudo mv $DEST $OLD
+sudo mkdir -p $DEST
+if ! egrep "^${devpath}" /etc/fstab; then
+  echo "$devpath /data ext4 defaults,nofail,noatime,nodiratime,barrier=0,data=writeback 0 2" | sudo tee -a /etc/fstab > /dev/null
+fi

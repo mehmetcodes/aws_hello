@@ -1,0 +1,8 @@
+#!/bin/bash
+if [[ $(sudo file -s /dev/sdf) != *ext4* && -b /dev/sdf ]]; then
+  sudo mkfs -t ext4 /dev/sdf
+fi
+sudo mkdir -p /dev/sdf
+if ! egrep "^/data" /etc/fstab; then
+  echo "/dev/sdf /data ext4 defaults,nofail,noatime,nodiratime,barrier=0,data=writeback 0 2" | sudo tee -a /etc/fstab > /dev/null
+fi

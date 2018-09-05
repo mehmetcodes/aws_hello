@@ -2,6 +2,9 @@ resource "aws_instance" "example" {
   ami           = "${lookup(var.amis, var.region)}"
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.main_public.id}"
+  key_name = "deployer-key"
+  user_data = "${file("user-data.example")}"
+  vpc_security_group_ids = ["${aws_security_group.main_allow_ssh.id}"]
   depends_on = ["aws_internet_gateway.gw"]
   tags {
     Name = "main vpc example"
@@ -27,7 +30,9 @@ resource "aws_instance" "bastion" {
   ami           = "${lookup(var.amis, var.region)}"
   instance_type = "t2.micro"
   subnet_id = "${aws_subnet.main_public.id}"
+  key_name = "deployer-key"
   depends_on = ["aws_internet_gateway.gw"]
+  vpc_security_group_ids = ["${aws_security_group.main_allow_ssh.id}"]
   tags {
     Name = "main vpc bastion"
     CostAllocation = "AWS Takehome"
